@@ -2,6 +2,8 @@ from pymongo import MongoClient
 import requests
 from bs4 import BeautifulSoup
 import json
+from dotenv import load_dotenv
+import os
 
 BASE_URL = 'http://quotes.toscrape.com'
 
@@ -56,9 +58,17 @@ with open('authors.json', 'w', encoding='utf-8') as f:
 
 
 # ------------------------ MongoDB ------------------------
-    
-client = MongoClient("mongodb+srv://sgpavlot:lX3ZJFTPWewgcgtm@clustergoit.12fxhyj.mongodb.net/?retryWrites=true&w=majority&appName=ClusterGOIT")
-db = client['db-quotes']
+
+
+# Load environment variables
+load_dotenv()
+
+# Get the connection string from environment variables
+mongo_connection_string = os.getenv('MONGO_CONNECTION_STRING')    
+client = MongoClient(mongo_connection_string)
+dbName =  os.getenv('MONGO_DATABASE_NAME')
+
+db = client[dbName]
 
 # Insert data into collections
 db.authors.insert_many(list(authors_data.values()))
